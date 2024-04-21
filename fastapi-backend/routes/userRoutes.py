@@ -20,7 +20,7 @@ ALGORITHM = config['auth-api']['ALGORITHM']
 tokenUrl = config['password']['tokenUrl']
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl=tokenUrl)
 
-# Dependency to get current user from token
+# Function to get current user from token
 async def get_current_user(token: str = Depends(oauth2_scheme)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -77,38 +77,16 @@ def upload_to_s3(file, s3, bucket_name, file_name):
             return False, "File not found"
         except NoCredentialsError:
             return False, "Credentials not found"
-        
-# # Route to handle multiple file uploads
-# @router.post("/upload/")
-# async def upload_files_to_s3(files: List[UploadFile] = File(...), current_user: dict = Depends(get_current_user)):
-#     try:
-#         s3, bucket_name = aws_connection()
-#         uploaded_files = []
-#         for file in files:
-#             file_name = f"Resumes/{file.filename}"
-#             success, message = upload_to_s3(file.file, s3, bucket_name, file_name)
-#             s3_file_url = "s3://" + bucket_name + "/" + file_name
-#             if success:
-#                 if mapUserAndFile(current_user, file.filename):
-#                     uploaded_files.append({"file_name": file.filename, "file_location": s3_file_url})
-#             else:
-#                 return {"error": message}
-        
-#         return {"message": "Files uploaded successfully", "uploaded_files": uploaded_files}
-#     except Exception as e:
-#         return {"error": str(e)}
-#     finally:
-#         for file in files:
-#             file.file.close()
             
 # Route to handle multiple file uploads
 @router.post("/upload/")
 async def upload_files_to_s3(files: List[UploadFile] = File(...), current_user: dict = Depends(get_current_user)):
     try:
         s3, bucket_name = aws_connection()
+        resumes_folder_name= config['s3-bucket']['resumes_folder_name']
         uploaded_files = []
         for file in files:
-            file_name = f"Resumes/{file.filename}"
+            file_name = resumes_folder_name+file.filename
             # Check if the file already exists in S3
             if check_file_exists(s3, bucket_name, file_name):
                 # If it exists, skip processing this file and move to the next one

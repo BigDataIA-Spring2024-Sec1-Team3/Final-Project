@@ -1,10 +1,10 @@
 import boto3
 import configparser
 from pymongo import MongoClient
-import snowflake
+import snowflake.connector
 from openai import OpenAI
 
-config = configparser.RawConfigParser()
+config = configparser.ConfigParser()
 config.read('configuration.properties')
 
 def aws_connection():
@@ -23,14 +23,16 @@ def aws_connection():
         print("Exception in aws_connection function: ", e)
         return
 
+
 def mongo_connection():
     try:
         client = MongoClient(config['MONGODB']['MONGODB_URL'])
         db = client[config['MONGODB']["DATABASE_NAME"]]
         return db
     except Exception as e:
-        print("Exception in mongodb_connection function: ",e)
-        
+        print("Exception in mongodb_connection function: ", e)
+
+
 def snowflake_connection():
     try:
         user = config['SNOWFLAKE']['user']
@@ -43,35 +45,36 @@ def snowflake_connection():
         table = config['SNOWFLAKE']['jobsTable']
 
         conn = snowflake.connector.connect(
-                    user=user,
-                    password=password,
-                    account=account,
-                    warehouse=warehouse,
-                    database=database,
-                    schema=schema,
-                    role=role
-                    )
-        
+            user=user,
+            password=password,
+            account=account,
+            warehouse=warehouse,
+            database=database,
+            schema=schema,
+            role=role
+        )
+
         return conn, table
     except Exception as e:
-        print("Exception in snowflake_connection function: ",e)
-        return 
-        
+        print("Exception in snowflake_connection function: ", e)
+        return
+
+
 def openai_connection():
     try:
         openai_api_key = config['OPENAI']['api_key']
         openai_client = OpenAI(api_key=openai_api_key)
         return openai_client
     except Exception as e:
-        print("Exception in openai_connection function: ",e)
-        return 
-    
+        print("Exception in openai_connection function: ", e)
+        return
+
+
 def pinecone_connection():
     try:
         pinecone_api_key = config['PINECONE']['pinecone_api_key']
         index_name = config['PINECONE']['index']
         return pinecone_api_key, index_name
     except Exception as e:
-        print("Exception in pinecone_connection function: ",e)
-        return  
-    
+        print("Exception in pinecone_connection function: ", e)
+        return

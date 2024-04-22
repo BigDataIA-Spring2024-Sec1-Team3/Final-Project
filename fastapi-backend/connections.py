@@ -4,7 +4,7 @@ from pymongo import MongoClient
 import snowflake
 from openai import OpenAI
 
-config = configparser.RawConfigParser()
+config = configparser.ConfigParser()
 config.read('configuration.properties')
 
 def aws_connection():

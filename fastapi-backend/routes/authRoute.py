@@ -4,7 +4,7 @@ import configparser
 import jwt
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from connections import mongo_connection
 
 router = APIRouter()
@@ -14,10 +14,9 @@ config.read('./configuration.properties')
 
 # User model
 class User(BaseModel):
-    userid: int
     username: str
     password: str
-    email: str
+    email: EmailStr
 
 
 # JWT config
@@ -58,11 +57,14 @@ async def user_signup(user: User):
         db = mongo_connection()
         collection = db[config['MONGODB']["COLLECTION_USER"]]
         
-        existing_user = collection.find_one({"username": user_data["username"]})
-        
+        existing_user = collection.find_one({"email": user_data["email"]})
         if existing_user:
-            raise HTTPException(status_code=400, detail="User already exists") 
-    
+            raise HTTPException(status_code=400, detail="User with the same email already exists") 
+        
+        last_user = collection.find_one(sort=[("userid", -1)])
+        new_user_id = last_user["userid"] + 1 if last_user else 1
+        user_data["userid"] = new_user_id
+        
         # Hash the password
         user_data["password"] = pwd_context.hash(user_data["password"])
         result = collection.insert_one(user_data)
@@ -75,7 +77,9 @@ async def user_signup(user: User):
                 }
         else:
             raise HTTPException(status_code=500, detail="Failed to create user")
-    
+    except HTTPException as http_err:
+        print(f"HTTP error occurred: {http_err}")
+        raise
     except Exception as e:
         print("An error occurred:", e)
         raise HTTPException(status_code=500, detail="Internal server error")
@@ -85,7 +89,6 @@ async def user_signup(user: User):
 @router.post("/token")
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     db = mongo_connection()
-    print("db",db)
     collection = db[config['MONGODB']["COLLECTION_USER"]]
     user = authenticate_user(form_data.username, form_data.password, collection)
     if not user:

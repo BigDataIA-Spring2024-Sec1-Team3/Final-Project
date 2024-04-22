@@ -7,7 +7,7 @@ import time
 from datetime import date
 import concurrent.futures
 import os
-from connnections import aws_connection, snowflake_connection
+from connections import aws_connection, snowflake_connection
 
 def scrape_jobs(job_titles, location):
     try:

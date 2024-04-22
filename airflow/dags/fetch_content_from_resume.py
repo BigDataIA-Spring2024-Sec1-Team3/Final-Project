@@ -77,6 +77,3 @@ def pdf_txt_extraction():
         print("Exception in pdf_txt_extraction function: ", e)
         return None
 
-
-if __name__ == "__main__":
-    pdf_txt_extraction()

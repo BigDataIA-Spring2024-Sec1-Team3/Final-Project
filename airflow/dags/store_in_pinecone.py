@@ -99,7 +99,3 @@ def storing_pinecone():
         print("Exception in storing_pinecone() function: ", e)
         return "failed"
 
-
-if __name__ == "__main__":
-    # function to store data into pinecone
-    result = storing_pinecone()

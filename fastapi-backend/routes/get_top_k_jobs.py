@@ -1,4 +1,3 @@
-import boto3
 import configparser
 from sentence_transformers import SentenceTransformer
 import torch
@@ -7,6 +6,7 @@ from connections import aws_connection, pinecone_connection
 
 config = configparser.ConfigParser()
 config.read('configuration.properties')
+
 
 def fetch_text_data():
 
@@ -67,7 +67,3 @@ def fetch_from_pinecone():
     except Exception as e:
         print("Exception in fetch_from_pinecone() function: ", e)
         return "failed"
-
-
-if __name__ == "__main__":
-    fetch_from_pinecone()

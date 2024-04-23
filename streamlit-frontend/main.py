@@ -42,7 +42,7 @@ def main():
         if st.sidebar.button('Logout'):
             st.session_state['logged_in'] = False
             del st.session_state['access_token']
-            st.experimental_rerun()
+            st.rerun()
 
         if st.session_state['logged_in']:
             page = PAGES[selection]

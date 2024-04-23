@@ -33,6 +33,6 @@ def login_page():
             if response:
                 st.session_state['logged_in'] = True
                 st.success("Login successful!")
-                st.experimental_rerun()
+                st.rerun()
             else:
-                st.error("Incorrect email or password.")
+                st.error("Incorrect username or password.")

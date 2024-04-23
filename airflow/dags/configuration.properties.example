@@ -18,6 +18,8 @@ access_key = <value>
 secret_key = <value>
 region_name = <value>
 bucket = <value>
+resumes_folder_name = <value>
+txt_folder_name = <value>
 
 [SNOWFLAKE]
 user = <value>

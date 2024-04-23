@@ -6,7 +6,7 @@ import pandas as pd
 import time
 from datetime import date
 import os
-from connnections import aws_connection
+from connections import aws_connection
 from io import BytesIO, StringIO
 
 def clean_and_stage(jobs_df):

@@ -1,8 +1,7 @@
 import boto3
 import configparser
 from pymongo import MongoClient
-import snowflake
-from openai import OpenAI
+import snowflake.connector
 
 config = configparser.RawConfigParser()
 config.read('configuration.properties')
@@ -12,7 +11,7 @@ def aws_connection():
         # s3 connection details
         aws_access_key = config['AWS']['access_key']
         aws_secret_key = config['AWS']['secret_key']
-        bucket_name = config['s3-bucket']['bucket']
+        bucket_name = config['AWS']['bucket']
 
         s3_client = boto3.client(
             's3', aws_access_key_id=aws_access_key, aws_secret_access_key=aws_secret_key)
@@ -55,23 +54,5 @@ def snowflake_connection():
         return conn, table
     except Exception as e:
         print("Exception in snowflake_connection function: ",e)
-        return 
-        
-def openai_connection():
-    try:
-        openai_api_key = config['OPENAI']['api_key']
-        openai_client = OpenAI(api_key=openai_api_key)
-        return openai_client
-    except Exception as e:
-        print("Exception in openai_connection function: ",e)
-        return 
-    
-def pinecone_connection():
-    try:
-        pinecone_api_key = config['PINECONE']['pinecone_api_key']
-        index_name = config['PINECONE']['index']
-        return pinecone_api_key, index_name
-    except Exception as e:
-        print("Exception in pinecone_connection function: ",e)
         return  
     

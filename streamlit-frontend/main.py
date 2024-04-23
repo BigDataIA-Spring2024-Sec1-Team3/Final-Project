@@ -14,12 +14,11 @@ PAGES = {
     "Find Jobs": get_job_matches
 }
 
-
 def main():
     if 'logged_in' not in st.session_state:
         st.session_state['logged_in'] = False
-
-    if not st.session_state['logged_in']:
+    
+    if not st.session_state['logged_in']:      
         # img = Image.open('./images/jobmatch.png')
         # # Logo
         # col1, col2 = st.columns([3, 3])
@@ -30,10 +29,10 @@ def main():
         st.title("Job Match")
         st.title("Login/Signup")
         tab1, tab2 = st.tabs(["Login", "Signup"])
-
+        
         with tab1:
             login_page()
-
+            
         with tab2:
             signup_page()
     else:
@@ -43,14 +42,13 @@ def main():
         if st.sidebar.button('Logout'):
             st.session_state['logged_in'] = False
             del st.session_state['access_token']
-            st.experimental_rerun()
+            st.rerun()
 
         if st.session_state['logged_in']:
             page = PAGES[selection]
             page_function = getattr(
                 page, 'show_' + selection.lower().replace(' ', '_'))
             page_function()
-
 
 if __name__ == "__main__":
     main()

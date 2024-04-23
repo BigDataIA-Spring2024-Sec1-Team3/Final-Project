@@ -17,8 +17,6 @@ username = <value>
 access_key = <value>
 secret_key = <value>
 region_name = <value>
-
-[s3-bucket]
 bucket = <value>
 resumes_folder_name = <value>
 txt_folder_name = <value>

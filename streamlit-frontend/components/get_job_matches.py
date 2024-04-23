@@ -6,7 +6,6 @@ import requests
 config = configparser.ConfigParser()
 config.read('./configuration.properties')
 
-
 def getResumeList():
     access_token = st.session_state['access_token']
 
@@ -16,7 +15,6 @@ def getResumeList():
     }
     base_url = config['APIs']['base_url_auth']
     resumeList_url = base_url + "userRoutes/files"
-
     response = requests.get(resumeList_url, headers=headers)
 
     if response.status_code == 200:
@@ -24,7 +22,6 @@ def getResumeList():
         return result  # Return the list of resume names obtained from the backend
     else:
         return []  # Return an empty list if the request fails
-
 
 def show_find_jobs():
     st.title("Find Jobs")
@@ -53,3 +50,4 @@ def show_find_jobs():
                     f'<iframe src="{url}" width="700" height="1000"></iframe>', unsafe_allow_html=True)
             else:
                 st.error("Failed to fetch the resume.")
+

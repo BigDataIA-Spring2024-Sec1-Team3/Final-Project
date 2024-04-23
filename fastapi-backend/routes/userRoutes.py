@@ -42,10 +42,7 @@ def mapUserAndFile(user, file_name):
     try:
         db = mongo_connection()
         collection = db[config['MONGODB']["COLLECTION_USER_FILE"]]
-        user_file_data = {
-            "userid": user["userid"], "username": user["username"], "file_name": file_name}
-        user_file_data = {
-            "userid": user["userid"], "email": user["email"], "file_name": file_name}
+        user_file_data = {"userid": user["userid"], "email": user["email"], "file_name": file_name}
         collection.insert_one(user_file_data)
         return True
     except Exception as e:
@@ -93,10 +90,7 @@ async def upload_files_to_s3(files: List[UploadFile] = File(...), current_user: 
             # Check if the file already exists in S3
             if check_file_exists(s3, bucket_name, file_name):
                 # If it exists, skip processing this file and move to the next one
-                uploaded_files.append(
-                    {"file_name": file.filename, "status": "File already exists in S3"})
-                uploaded_files.append(
-                    {"file_name": file.filename, "status": "File already exists"})
+                uploaded_files.append({"file_name": file.filename, "status": "File already exists"})
                 continue
             # If the file doesn't exist, upload it to S3
             success, message = upload_to_s3(
@@ -120,7 +114,6 @@ async def upload_files_to_s3(files: List[UploadFile] = File(...), current_user: 
 @router.get("/getJobMatches/")
 async def get_job_matches(jobs: List[str], current_user: dict = Depends(get_current_user)):
     print(jobs)
-
 
 @router.get("/files/", response_model=List[str])
 async def get_files(current_user: str = Depends(get_current_user)):

@@ -56,16 +56,14 @@ async def user_signup(user: User):
 
         db = mongo_connection()
         collection = db[config['MONGODB']["COLLECTION_USER"]]
-
         existing_user = collection.find_one({"email": user_data["email"]})
         if existing_user:
-            raise HTTPException(
-                status_code=400, detail="User with the same email already exists")
-
+            raise HTTPException(status_code=400, detail="User with the same email already exists") 
+        
         last_user = collection.find_one(sort=[("userid", -1)])
         new_user_id = last_user["userid"] + 1 if last_user else 1
         user_data["userid"] = new_user_id
-
+        
         # Hash the password
         user_data["password"] = pwd_context.hash(user_data["password"])
         result = collection.insert_one(user_data)
@@ -77,8 +75,8 @@ async def user_signup(user: User):
                 "userid": user_data["userid"]
             }
         else:
-            raise HTTPException(
-                status_code=500, detail="Failed to create user")
+            raise HTTPException(status_code=500, detail="Failed to create user")
+
     except HTTPException as http_err:
         print(f"HTTP error occurred: {http_err}")
         raise

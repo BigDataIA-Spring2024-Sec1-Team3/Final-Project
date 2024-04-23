@@ -5,13 +5,11 @@ import configparser
 config = configparser.ConfigParser()
 config.read('./configuration.properties')
 
-
 def authenticate_user(username, password):
     try:
         base_url = config['APIs']['base_url_auth']
         login_url = base_url + "token"
-        response = requests.post(
-            login_url, data={"username": username, "password": password})
+        response = requests.post(login_url, data={"username": username, "password": password})
 
         # Check if the request was successful
         if response.status_code == 200:
@@ -25,12 +23,10 @@ def authenticate_user(username, password):
         st.error(f"Error occurred during authentication: {e}")
         return False
 
-
 def login_page():
     with st.form("login_form", clear_on_submit=True):
         username = st.text_input("Username", key="login_username")
-        password = st.text_input(
-            "Password", type="password", key="login_password")
+        password = st.text_input("Password", type="password", key="login_password")
         submitted = st.form_submit_button("Login")
         if submitted:
             response = authenticate_user(username, password)

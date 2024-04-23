@@ -1,7 +1,7 @@
 import boto3
 import configparser
 from pymongo import MongoClient
-import snowflake
+import snowflake.connector
 from openai import OpenAI
 
 config = configparser.ConfigParser()

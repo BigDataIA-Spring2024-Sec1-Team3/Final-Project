@@ -4,7 +4,7 @@ import pandas as pd
 import time
 from datetime import date
 import os
-from connnections import aws_connection
+from connections import aws_connection
 from io import BytesIO, StringIO
 
 def clean_and_stage(jobs_df):
@@ -125,7 +125,7 @@ def scrape_job_details(job_id, internal_driver, url):
             "max_salary":max_sal, "employment_type": employment_type, "source":"Indeed", "job_url": url, "date_posted": str(date.today()),"job_desc": f"{job_desc}"}
         
 
-def scrape_indeed_jobs(job_titles, location):
+def scrape_indeed_jobs():
     '''
     function to scrape outer pages of jobs
     '''
@@ -137,6 +137,8 @@ def scrape_indeed_jobs(job_titles, location):
     internal_driver = webdriver.Chrome(options=option)
     try:
         jobs_df = pd.DataFrame(columns=["job_id","job_title","company","job_location","min_salary","max_salary","employment_type","source","job_url","date_posted","job_desc"])
+        job_titles = ['Data Engineer','Software Engineer','Data Analyst','Data Scientist','Backend Developer','UI UX Developer','Financial Analyst','Full stack developer','Supply Chain Manager','Front End Developer']
+        location = "United States"
         
         for title in job_titles:
             temp_li = []
@@ -204,8 +206,3 @@ def scrape_indeed_jobs(job_titles, location):
         
     driver.quit()
     internal_driver.quit()
-    
-job_titles = ['Data Engineer','Software Engineer','Data Analyst','Data Scientist','Backend Developer','UI UX Developer','Financial Analyst','Full stack developer','Supply Chain Manager','Front End Developer']
-location = "United States"
-
-scrape_indeed_jobs(job_titles, location)

@@ -37,9 +37,11 @@ def clean_and_stage(jobs_df):
         print("Exception in clean_and_stage function: ", e)   
         return "Failed"
     
-def scrape_linkedin_jobs(job_titles, location):
+def scrape_linkedin_jobs():
     try:
         jobs_df = pd.DataFrame(columns=["job_id","job_title","company","job_location","min_salary","max_salary","employment_type","source","job_url","date_posted","job_desc"])
+        job_titles = ['Data Engineer','Software Engineer','Data Analyst','Data Scientist','Backend Developer','UI UX Developer','Financial Analyst','Full stack developer','Supply Chain Manager','Front End Developer']
+        location = "United States"
         
         # construct URL for LinkedIn job search
         for title in job_titles:
@@ -167,8 +169,3 @@ def scrape_linkedin_jobs(job_titles, location):
         if(len(jobs_df) != 0):
             # staging in S3
             res = clean_and_stage(jobs_df)
-            
-job_titles = ['Data Engineer','Software Engineer','Data Analyst','Data Scientist','Backend Developer','UI UX Developer','Financial Analyst','Product Manager','Supply Chain Manager','Front End Developer','Full stack developer']
-location = "United States"
-
-scrape_linkedin_jobs(job_titles, location)

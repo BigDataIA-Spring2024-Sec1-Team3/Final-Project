@@ -3,9 +3,9 @@ from selenium import webdriver
 import pandas as pd
 import time
 from datetime import date
-import os
-from connections import aws_connection
 from io import BytesIO, StringIO
+import requests
+from extract.connections import aws_connection
 
 def clean_and_stage(jobs_df):
     '''
@@ -35,17 +35,19 @@ def clean_and_stage(jobs_df):
         print("Exception in clean_and_stage function: ", e)   
         return "Failed"
     
-def scrape_job_details(job_id, internal_driver, url):
+def scrape_job_details(job_id, url):
     '''
     Function to scrape - "j_title","company","job_location","min salary","max salary","employment_type","job_url","date_posted","job_desc"
     '''
     # Fetch job page
-    internal_driver.get(url)
-    time.sleep(2)
+    job_response = requests.get(url)
+    time.sleep()
     
     # Get page source for summary page
-    job_details_page_source = internal_driver.page_source
+    print(url)
+    job_details_page_source = job_response.text
     job_content = BeautifulSoup(job_details_page_source, 'html.parser')
+    print(job_content)
     
     # Fetching job title
     try:
@@ -124,61 +126,66 @@ def scrape_job_details(job_id, internal_driver, url):
     return {"job_id": job_id, "job_title": j_title, "company":company, "job_location": job_location, "min_salary": min_sal, 
             "max_salary":max_sal, "employment_type": employment_type, "source":"Indeed", "job_url": url, "date_posted": str(date.today()),"job_desc": f"{job_desc}"}
         
-
 def scrape_indeed_jobs():
     '''
     function to scrape outer pages of jobs
     '''
-    option = webdriver.ChromeOptions()
-    option.add_argument('--incognito')
-    option.add_argument('--disable-dev-shm-usage')
-    
-    driver = webdriver.Chrome(options=option)
-    internal_driver = webdriver.Chrome(options=option)
     try:
         jobs_df = pd.DataFrame(columns=["job_id","job_title","company","job_location","min_salary","max_salary","employment_type","source","job_url","date_posted","job_desc"])
         job_titles = ['Data Engineer','Software Engineer','Data Analyst','Data Scientist','Backend Developer','UI UX Developer','Financial Analyst','Full stack developer','Supply Chain Manager','Front End Developer']
-        location = "United States"
+        location = "United%20States"
         
         for title in job_titles:
             temp_li = []
             start= 0 # starting point for pagination
             count_of_jobs_scraped = 0
+            title=title.replace(" ","%20")
             
-            while count_of_jobs_scraped < 20:
+            
+            while count_of_jobs_scraped < 10:
                 time.sleep(2)
                 main_url = f"https://www.indeed.com/jobs?q={title}&l={location}&fromage=1&start={start}"
                 start+=10
                 
                 try:
-                    driver.get(main_url)
-                    parsed_val = driver.page_source
-                    time.sleep(2)
+                    # Send a GET request to the URL and store the response
+                    response = requests.get(main_url)
+                    print("page fetch: ", response.status_code, "--", main_url)
                     
-                    # Get page source for summary page
-                    parsed_content = BeautifulSoup(parsed_val, 'html.parser')
-                    job_divs = parsed_content.find_all('div', attrs={"class":"css-dekpa e37uo190"})
-                    
-                    for div in job_divs:
+                    if response.status_code == 200:    
+                        # Find all list items(jobs postings)
+                        list_data = response.text
+                        parsed_content = BeautifulSoup(list_data, "html.parser")
+                        time.sleep(2)
                         
-                        # Fetching job id
-                        try:
-                            job_id = div.find("a", class_ = "jcs-JobTitle").get("data-jk")
-                        except Exception as e:
-                            print("Exception while fetching job id: ",e)
-                            break
+                        # Get page source for summary page
+                        job_divs = parsed_content.find_all('div', attrs={"class":"css-dekpa e37uo190"})
                         
-                        # Fetching URL for job
-                        url_for_job = "https://www.indeed.com"+div.find("a", class_ = "jcs-JobTitle")['href']
-                        
-                        # Fetching job details
-                        job_details = scrape_job_details(job_id, internal_driver, url_for_job)
-                        
-                        # Add data to DataFrame
-                        temp_li.append(job_details)
-                        
-                        # incrementing counter 
-                        count_of_jobs_scraped+=1
+                        for div in job_divs:
+                            
+                            if count_of_jobs_scraped < 10:
+                                # Fetching job id
+                                try:
+                                    job_id = div.find("a", class_ = "jcs-JobTitle").get("data-jk")
+                                except Exception as e:
+                                    print("Exception while fetching job id: ",e)
+                                    break
+                                
+                                # Fetching URL for job
+                                url_for_job = "https://www.indeed.com"+div.find("a", class_ = "jcs-JobTitle")['href']
+                                
+                                # Fetching job details
+                                job_details = scrape_job_details(job_id, url_for_job)
+                                
+                                # Add data to DataFrame
+                                temp_li.append(job_details)
+                                
+                                # incrementing counter 
+                                count_of_jobs_scraped+=1
+                            else:
+                                break
+                    else:
+                        start-=10
                                                     
                 except Exception as e:
                     print("Internal exception: ", e)
@@ -203,6 +210,3 @@ def scrape_indeed_jobs():
         if(len(jobs_df) != 0):
             # staging in S3
             res = clean_and_stage(jobs_df)
-        
-    driver.quit()
-    internal_driver.quit()

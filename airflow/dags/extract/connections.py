@@ -5,7 +5,8 @@ import snowflake.connector
 from openai import OpenAI
 
 config = configparser.ConfigParser()
-config.read('configuration.properties')
+config.read('/opt/airflow/dags/extract/configuration.properties')
+# config.read('configuration.properties')
 
 def aws_connection():
     try:
@@ -16,7 +17,7 @@ def aws_connection():
 
         s3_client = boto3.client(
             's3', aws_access_key_id=aws_access_key, aws_secret_access_key=aws_secret_key)
-
+        print(bucket_name)
         return s3_client, bucket_name
 
     except Exception as e:
@@ -58,4 +59,21 @@ def snowflake_connection():
     except Exception as e:
         print("Exception in snowflake_connection function: ",e)
         return  
-    
+
+def openai_connection():
+    try:
+        openai_api_key = config['OPENAI']['api_key']
+        openai_client = OpenAI(api_key=openai_api_key)
+        return openai_client
+    except Exception as e:
+        print("Exception in openai_connection function: ",e)
+        return 
+
+def pinecone_connection():
+    try:
+        pinecone_api_key = config['PINECONE']['pinecone_api_key']
+        index_name = config['PINECONE']['index']
+        return pinecone_api_key, index_name
+    except Exception as e:
+        print("Exception in pinecone_connection function: ",e)
+        return  

@@ -1,6 +1,7 @@
-from connections import snowflake_connection
+# from connections import snowflake_connection
+from load.connections import snowflake_connection
 
-def load_to_snowflake():
+def load_to_snowflake(csv_key):
     '''
     Function to load the data to snowflake table from stage.
     If the job already is present in table, update it.
@@ -22,7 +23,7 @@ def load_to_snowflake():
                                             $8 SOURCE, 
                                             $9 URL, 
                                             $10 DATE_POSTED, 
-                                            $11 DESCRIPTION from @jobs_stage (FILE_FORMAT => PIPE_SEPARATED_FF)) s
+                                            $11 DESCRIPTION from @jobs_stage/{csv_key} (FILE_FORMAT => PIPE_SEPARATED_FF)) s
                             ON t.JOB_ID = s.JOB_ID 
                             WHEN MATCHED THEN
                                 UPDATE SET  t.JOB_ID = s.JOB_ID,
@@ -54,5 +55,5 @@ def load_to_snowflake():
         
     except Exception as e:
         print("Exception in load_to_snowflake function: ", e)
-    
-# load_to_snowflake()
+        
+# load_to_snowflake("simplyhired_jobs.csv")

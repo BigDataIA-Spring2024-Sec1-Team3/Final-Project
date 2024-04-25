@@ -3,7 +3,8 @@ import re
 from typing import Optional, Union
 from datetime import datetime, date
 import pandas as pd
-from connections import aws_connection
+from validate.connections import aws_connection
+# from connections import aws_connection
 from io import StringIO, BytesIO
 import numpy as np
 
@@ -15,7 +16,7 @@ class ScrapedJobsModel(BaseModel):
     min_salary: Optional[PositiveInt]
     max_salary: Optional[PositiveInt]
     employment_type: Optional[str]
-    source: constr(strip_whitespace=True, pattern='^(LinkedIn|Indeed)$')
+    source: constr(strip_whitespace=True, pattern='^(LinkedIn|Indeed|SimplyHired)$')
     job_url: HttpUrl
     date_posted: date
     job_desc: str
@@ -105,12 +106,5 @@ def validate_and_process_jobs(csv_key):
     
     print("Clean CSV file generated successfully.")
     
-# validate_and_process_jobs("linkedin_jobs.csv")
-    
         
-    
-    
-    
-    
-    
-    
+# validate_and_process_jobs("simplyhired_jobs.csv")

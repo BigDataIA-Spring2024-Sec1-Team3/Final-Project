@@ -23,7 +23,7 @@ dag= DAG(
     dag_id = "trigger_linkedin_pipeline",
     default_args=default_args,
     description="DAG scheduled at 11 pm everyday",
-    schedule_interval='00 00 * * *',  # Scheduled to run at 11 PM daily
+    schedule_interval='00 03 * * *',  # Scheduled to run at 11 PM daily
     # schedule=None,  # Scheduled to run at 11 PM daily
 )
 

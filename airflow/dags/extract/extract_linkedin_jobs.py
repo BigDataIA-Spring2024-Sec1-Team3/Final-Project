@@ -37,19 +37,19 @@ def clean_and_stage(jobs_df):
 def scrape_linkedin_jobs():
     try:
         jobs_df = pd.DataFrame(columns=["job_id","job_title","company","job_location","min_salary","max_salary","employment_type","source","job_url","date_posted","job_desc"])
-        # job_titles = ['Data Engineer','Software Engineer','Data Analyst','Data Scientist','Backend Developer','UI UX Developer','Financial Analyst','Full stack developer','Supply Chain Manager']
-        job_titles = ['Devops Engineer', 'Product Manager', 'Developer']
+        job_titles = ['Data Engineer','Software Engineer','Data Analyst','Data Scientist','Backend Developer','UI UX Developer','Financial Analyst','Full stack developer','Supply Chain Manager']
+        # job_titles = ['Devops Engineer', 'Product Manager', 'Developer']
         location = "United States"
         fail_response_count = 0
         
         # construct URL for LinkedIn job search
         for title in job_titles:
-            if fail_response_count < 5:
+            if fail_response_count < 100:
                 start= 0 # starting point for pagination
                 count_of_jobs_scraped = 0
                 temp_li = []
                 
-                while count_of_jobs_scraped < 7:
+                while count_of_jobs_scraped < 8 and fail_response_count < 100:
                     time.sleep(5) 
                     li_url = f"https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?f_TPR=r86400&keywords={title}&location={location}&start={start}"
                     start += 10
@@ -80,9 +80,10 @@ def scrape_linkedin_jobs():
                                     job_response = requests.get(job_url)
                                     job_soup = BeautifulSoup(job_response.text, "html.parser")
                                     print("job response: ", job_response.status_code, " -- ", job_url)
+                                    print("fail response count: ", fail_response_count)
                                     
                                     # Try to extract and store the job title
-                                    if count_of_jobs_scraped < 7 and fail_response_count < 5:                                  
+                                    if count_of_jobs_scraped < 8 and fail_response_count < 100:                                  
                                         if job_response.status_code == 200:
                                             
                                             # extract job title

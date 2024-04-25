@@ -142,7 +142,7 @@ def scrape_indeed_jobs():
             title=title.replace(" ","%20")
             
             
-            while count_of_jobs_scraped < 10:
+            while count_of_jobs_scraped < 8:
                 time.sleep(2)
                 main_url = f"https://www.indeed.com/jobs?q={title}&l={location}&fromage=1&start={start}"
                 start+=10
@@ -163,7 +163,7 @@ def scrape_indeed_jobs():
                         
                         for div in job_divs:
                             
-                            if count_of_jobs_scraped < 10:
+                            if count_of_jobs_scraped < 8:
                                 # Fetching job id
                                 try:
                                     job_id = div.find("a", class_ = "jcs-JobTitle").get("data-jk")

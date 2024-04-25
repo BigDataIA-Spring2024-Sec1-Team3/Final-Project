@@ -57,15 +57,6 @@ def snowflake_connection():
         print("Exception in snowflake_connection function: ",e)
         return 
         
-def openai_connection():
-    try:
-        openai_api_key = config['OPENAI']['api_key']
-        openai_client = OpenAI(api_key=openai_api_key)
-        return openai_client
-    except Exception as e:
-        print("Exception in openai_connection function: ",e)
-        return 
-    
 def pinecone_connection():
     try:
         pinecone_api_key = config['PINECONE']['pinecone_api_key']

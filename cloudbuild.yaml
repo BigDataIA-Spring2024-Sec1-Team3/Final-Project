@@ -1,10 +1,10 @@
 steps:
   # Build frontend service
-  - name: 'gcr.io/cloud-builders/docker'
+  - name: 'gcr.io/final-project-421420/jobmatch-frontend'
     args: ['compose', 'build', 'frontend']
 
   # Build backend service
-  - name: 'gcr.io/cloud-builders/docker'
+  - name: 'gcr.io/final-project-421420/jobmatch-backend'
     args: ['compose', 'build', 'backend']
 
   # Push the built images to Google Container Registry (GCR) for frontend service
@@ -14,11 +14,3 @@ steps:
   # Push the built images to Google Container Registry (GCR) for backend service
   - name: 'gcr.io/final-project-421420/jobmatch-backend'
     args: ['compose', 'push']
-
-  # Push the built images to Google Container Registry (GCR) for frontend service
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/inal-project-421420/jobmatch-frontend']
-
-  # Push the built images to Google Container Registry (GCR) for backend service
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/final-project-421420/jobmatch-backend']

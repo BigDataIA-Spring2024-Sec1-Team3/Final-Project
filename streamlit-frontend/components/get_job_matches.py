@@ -106,21 +106,32 @@ def show_find_jobs():
         )
 
         if view_resume_button:
-            modal.open()
-
-        if modal.is_open():
-            with modal.container():
-                access_token = st.session_state['access_token']
-                headers = {"Authorization": f"Bearer {access_token}"}
-                base_url = config['APIs']['base_url_auth']
-                url = base_url + f"userRoutes/getResume/?file_name=" + selected_resume
-                response = requests.get(
-                    url, headers=headers)
-                if response.status_code == 200:
-                    st.markdown(
+            access_token = st.session_state['access_token']
+            headers = {"Authorization": f"Bearer {access_token}"}
+            base_url = config['APIs']['base_url_auth']
+            url = base_url + f"userRoutes/getResume/?file_name=" + selected_resume
+            response = requests.get(
+                url, headers=headers)
+            if response.status_code == 200:
+                st.markdown(
                         f'<iframe src="{url}" width="1000" height="1000"></iframe>', unsafe_allow_html=True)
-                else:
-                    st.error("Failed to fetch the resume.")
+            else:
+                st.error("Failed to fetch the resume.")
+        #     modal.open()
+
+        # if modal.is_open():
+        #     with modal.container():
+        #         access_token = st.session_state['access_token']
+        #         headers = {"Authorization": f"Bearer {access_token}"}
+        #         base_url = config['APIs']['base_url_auth']
+        #         url = base_url + f"userRoutes/getResume/?file_name=" + selected_resume
+        #         response = requests.get(
+        #             url, headers=headers)
+        #         if response.status_code == 200:
+        #             st.markdown(
+        #                 f'<iframe src="{url}" width="1000" height="1000"></iframe>', unsafe_allow_html=True)
+        #         else:
+        #             st.error("Failed to fetch the resume.")
 
         if get_job_matches_button:
             recommended_jobs, error_msg = fetch_job_recommendations(selected_resume)

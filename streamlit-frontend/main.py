@@ -14,8 +14,8 @@ from PIL import Image
 PAGES = {
     "Upload Files": upload_page,
     "Find Jobs": get_job_matches,
-    "Analytics Dashboard": analytics,
-    "Missing Keywords": get_missing_keywords
+    "Missing Keywords": get_missing_keywords,
+    "Analytics Dashboard": analytics
 }
 
 def main():

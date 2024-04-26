@@ -1,0 +1,16 @@
+steps:
+  # Build frontend service
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['compose', 'build', 'frontend']
+
+  # Build backend service
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['compose', 'build', 'backend']
+
+  # Push the built images to Google Container Registry (GCR)
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['compose', 'push']
+
+  # Deploy the Docker Compose application
+  - name: 'gcr.io/cloud-builders/docker-compose'
+    args: ['-f', 'docker-compose.yaml', 'up', '-d']

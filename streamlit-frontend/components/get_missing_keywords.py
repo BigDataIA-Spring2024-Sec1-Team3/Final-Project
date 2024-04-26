@@ -54,18 +54,15 @@ def show_missing_keywords():
     )
  
     if view_missing_content_button:
-        modal.open()
+        access_token = st.session_state['access_token']
+        headers = {"Authorization": f"Bearer {access_token}"}
+        base_url = config['APIs']['base_url_auth']
+        url = base_url + f"userRoutes/getMissingKeywords/?file_name={selected_resume}&job_desc={job_desc}"
+        response = requests.get(
+            url, headers=headers)
+        if response.status_code == 200:
+            st.markdown(response.json(), unsafe_allow_html=True)
+        else:
+            st.error("Failed to fetch.")
  
-    if modal.is_open():
-        with modal.container():
- 
-            access_token = st.session_state['access_token']
-            headers = {"Authorization": f"Bearer {access_token}"}
-            base_url = config['APIs']['base_url_auth']
-            url = base_url + f"userRoutes/getMissingKeywords/?file_name={selected_resume}&job_desc={job_desc}"
-            response = requests.get(
-                url, headers=headers)
-            if response.status_code == 200:
-                st.markdown(response.json(), unsafe_allow_html=True)
-            else:
-                st.error("Failed to fetch.")
+            

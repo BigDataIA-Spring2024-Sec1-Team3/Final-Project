@@ -9,10 +9,11 @@ from starlette.responses import StreamingResponse
 from sentence_transformers import SentenceTransformer
 import torch
 from pinecone import Pinecone
-from connections import aws_connection, pinecone_connection, snowflake_connection
+from connections import aws_connection, pinecone_connection, snowflake_connection, openai_connection
 import os
 from PyPDF2 import PdfReader
 import re
+from openai import OpenAI
 
 router = APIRouter()
 
@@ -175,7 +176,8 @@ def getJobDetails(job_id):
             'job_location': row[3],
             'source': row[4],
             'url': row[5],
-            'date_posted': row[6]
+            'date_posted': row[6],
+            'description': row[7]
         }
         else:
             return None
@@ -218,6 +220,36 @@ def fetch_from_pinecone(file_name):
         print("Exception: ", e)
         return None
 
+def fetch_missing_keywords(resumeText, job_desc):
+    '''
+    Function to fetch missing keywords from OpenAI
+    '''
+    try:
+        openai_api_key = openai_connection()
+        openai_client = OpenAI(api_key=openai_api_key)
+        prompt = f"You are tasked with analyzing a given resume against a specific job description. Your goal is to identify the top 5 technology stack(like Python, C, C++, etc), required by the job description that are not explicitly mentioned in the resume. While doing so, ensure to consider semantically similar terms that might be implicitly present in the resume. Display your response as a markdown table with columns skill and description.\nCONTEXT:\nRESUME:\n{resumeText}\n\nJOB DESCRIPTION:\n{job_desc}\n"
+ 
+        response = openai_client.chat.completions.create(
+            model="gpt-3.5-turbo-0125",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
+            temperature=0.5,
+            max_tokens=2048,
+            frequency_penalty=0.1,
+            presence_penalty=0.1
+        )
+ 
+        missing_keywords = response.choices[0].message.content
+        return missing_keywords
+    
+    except Exception as e:
+        print("Error fetching missing keywords:", e)
+        return None
+    
 # Route to handle multiple file uploads
 @router.post("/upload/")
 async def upload_files_to_s3(files: List[UploadFile] = File(...), current_user: dict = Depends(get_current_user)):
@@ -292,5 +324,23 @@ async def get_job_recommendations(file_name: str, current_user: dict = Depends(g
         else:
             raise HTTPException(status_code=404, detail="No job recommendations found for the given file.")
     
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.get("/getMissingKeywords")
+async def get_missing_keywords(file_name: str, job_desc: str):
+                               
+    try:
+        file_name = file_name.replace(".pdf", ".txt")
+        resumeText = fetch_text_data(file_name)
+        # fetchFromOpenAi()
+        # prompt
+        response = fetch_missing_keywords(resumeText, job_desc)
+ 
+        if response:
+            return response
+        else:
+            raise HTTPException(
+                status_code=404, detail="No missing keywords found for the given file.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

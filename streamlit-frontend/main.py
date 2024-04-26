@@ -5,13 +5,15 @@ from components.login_page import login_page
 from components.signup_page import signup_page
 import components.upload_page as upload_page
 import components.get_job_matches as get_job_matches
+import components.analytics as analytics
 from PIL import Image
 
 # st.set_page_config(layout="wide")
 
 PAGES = {
     "Upload Files": upload_page,
-    "Find Jobs": get_job_matches
+    "Find Jobs": get_job_matches,
+    "Analytics Dashboard": analytics,
 }
 
 def main():

@@ -8,9 +8,9 @@ steps:
     args: ['compose', 'build', 'backend']
 
   # Push the built images to Google Container Registry (GCR)
-  - name: 'gcr.io/final-project/jobmatch'
+  - name: 'gcr.io/final-project-421420/jobmatch'
     args: ['compose', 'push']
 
   # Deploy the Docker Compose application
-  - name: 'gcr.io/inal-project/jobmatch'
+  - name: 'gcr.io/final-project-421420/jobmatch'
     args: ['-f', 'docker-compose.yaml', 'up', '-d']

@@ -266,7 +266,7 @@ async def get_files(current_user: str = Depends(get_current_user)):
 
 
 @router.get("/getResume/")
-async def get_resume(file_name: str, current_user: dict = Depends(get_current_user)):
+async def get_resume(file_name: str):
     s3_client, bucket_name = aws_connection()
     resumes_folder_name = config['s3-bucket']['resumes_folder_name']
     full_path = resumes_folder_name + file_name

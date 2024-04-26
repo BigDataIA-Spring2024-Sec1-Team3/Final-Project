@@ -1,0 +1,17 @@
+steps:
+  # Build and push images using Docker Compose
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['compose', '-f', 'docker-compose.yaml', 'build']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['compose', '-f', 'docker-compose.yaml', 'push']
+
+  # Deployment step
+  - name: 'gcr.io/cloud-builders/gcloud'
+    args:
+      - 'compute'
+      - 'instances'
+      - 'update-container'
+      - 'frontend-backend'
+      - '--container-image=gcr.io/final-project-421420/frontend:latest'  # Use the latest frontend image from GCR
+      - '--container-image=gcr.io/final-project-421420/backend:latest'  # Use the latest backend image from GCR

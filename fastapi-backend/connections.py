@@ -66,3 +66,11 @@ def pinecone_connection():
         print("Exception in pinecone_connection function: ",e)
         return  
     
+def openai_connection():
+    try:
+        api_key = config['OPENAI']['api_key']
+        
+        return api_key
+    except Exception as e:
+        print("Exception in openai_connection function: ",e)
+        return

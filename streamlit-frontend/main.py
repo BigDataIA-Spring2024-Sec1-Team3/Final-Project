@@ -6,6 +6,7 @@ from components.signup_page import signup_page
 import components.upload_page as upload_page
 import components.get_job_matches as get_job_matches
 import components.analytics as analytics
+import components.get_missing_keywords as get_missing_keywords
 from PIL import Image
 
 # st.set_page_config(layout="wide")
@@ -14,6 +15,7 @@ PAGES = {
     "Upload Files": upload_page,
     "Find Jobs": get_job_matches,
     "Analytics Dashboard": analytics,
+    "Missing Keywords": get_missing_keywords
 }
 
 def main():

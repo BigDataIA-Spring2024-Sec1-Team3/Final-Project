@@ -39,9 +39,12 @@ def fetch_job_recommendations(selected_resume):
     except Exception as e:
         error_msg = str(e)
         return None, error_msg
+    
 
-def display_jobs(recommended_jobs):
+def display_jobs(recommended_jobs, selected_resume):
     if recommended_jobs:
+        if "selected_job_details" not in st.session_state:
+            st.session_state['selected_job_details'] = recommended_jobs[0]
         for job in recommended_jobs:
             st.markdown(
                 """
@@ -58,6 +61,8 @@ def display_jobs(recommended_jobs):
             date_posted = job['jobDetails']['date_posted']
             url = job['jobDetails']['url']
             source= job['jobDetails']['source']
+            # description = job['jobDetails']['description']
+            # button_label = f"Get Missing Keywords for {job_title}"
             st.markdown(
                 f"""
                 <div style="border: 1px solid #e6e6e6; border-radius: 5px; padding: 10px; margin-bottom: 20px;">
@@ -72,7 +77,6 @@ def display_jobs(recommended_jobs):
                     <p>Location: {location}</p>
                     <p>Date Posted: {date_posted}</p>
                     <p>Source: {source}</p>
-                </div>
                 """,
                 unsafe_allow_html=True
             )
@@ -87,6 +91,8 @@ def show_find_jobs():
     selected_resume = st.selectbox("Select a resume", resume_names)
 
     if selected_resume:
+        if "selected_resume" not in st.session_state:
+            st.session_state["selected_resume"]=selected_resume
         st.write(f"You selected resume: {selected_resume}")
         
         get_job_matches_button = st.button("Get Job Matches")
@@ -121,4 +127,4 @@ def show_find_jobs():
             if error_msg:
                 st.error(error_msg)
             else:
-                display_jobs(recommended_jobs)
+                display_jobs(recommended_jobs,selected_resume)

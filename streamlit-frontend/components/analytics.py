@@ -36,7 +36,7 @@ def show_analytics_dashboard():
                         locations="STATE",
                         locationmode='USA-states',
                         color="COUNT",
-                        color_continuous_scale="Turbo",
+                        color_continuous_scale="blugrn",
                         scope="usa",
                         labels={'COUNT': 'Job Count'},
                         title="Job Density Across the US by State")

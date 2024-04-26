@@ -5,7 +5,7 @@ import requests
 import configparser
 
 config = configparser.ConfigParser()
-config.read('configuration.properties')
+config.read('./configuration.properties')
 
 
 def fetch_data(url):
@@ -18,12 +18,11 @@ def fetch_data(url):
 
 def show_analytics_dashboard():
     # Change this if your backend runs on a different address
-    backend_url = config['APIs']['base_url']
+    backend_url = config['APIs']['base_url_auth']
 
     st.title('Job Analytics Dashboard')
 
     # Fetch data from backend
-    data = fetch_data(f"{backend_url}analyticsRoute/data")
     job_counts = fetch_data(f"{backend_url}analyticsRoute/job_counts")
     job_title_counts = fetch_data(
         f"{backend_url}analyticsRoute/job_title_counts")

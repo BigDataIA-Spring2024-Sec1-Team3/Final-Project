@@ -48,6 +48,12 @@ def get_job_counts(data):
     job_counts.columns = ['STATE', 'COUNT']
     return job_counts
 
+def get_employment_type_counts(data):
+    employment_type_counts = data['EMPLOYMENT_TYPE'].value_counts().reset_index()
+    employment_type_counts.columns = ['EMPLOYMENT_TYPE', 'COUNT']
+    return employment_type_counts
+
+
 
 def filter_and_count_jobs(data, job_titles):
     data['Normalized_Job_Title'] = data['JOB_TITLE'].str.lower().str.strip()
@@ -80,7 +86,6 @@ def preprocess_salaries(data):
         lambda x: x * hour_to_yearly_factor if x < 100 else x)
     data['MAX_SALARY'] = data['MAX_SALARY'].apply(
         lambda x: x * hour_to_yearly_factor if x < 100 else x)
-    print("data", data['MIN_SALARY'])
     return data
 
 
@@ -110,4 +115,22 @@ async def get_title_counts():
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
+@ router.get("/salaries")
+async def get_salaries():
+    try:
+        data = load_data()
+        data = preprocess_salaries(data)
+        selected_data = data[["MIN_SALARY", "MAX_SALARY"]]
+        return selected_data.to_dict(orient="records")
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)
 
+@ router.get("/employment_types")
+async def get_employment_types():
+    try:
+        data = load_data()
+        data = filter_employment_types(data)
+        employment_type_counts = get_employment_type_counts(data)
+        return employment_type_counts.to_dict(orient="records")
+    except Exception as e:
+        return JSONResponse(content={"error": str(e)}, status_code=500)

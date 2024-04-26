@@ -204,6 +204,8 @@ index =
 
 ## Team Contribution
 
+WE ATTEST THAT WE HAVEN’T USED ANY OTHER STUDENTS’ WORK IN OUR ASSIGNMENT AND ABIDE BY THE POLICIES LISTED IN THE STUDENT HANDBOOK
+
 | Name                      | Contribution % |
 | ------------------------- | -------------- |
 | Muskan Deepak Raisinghani | 33.3%          |
